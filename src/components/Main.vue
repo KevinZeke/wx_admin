@@ -1,9 +1,10 @@
 <style scoped>
-    .layout-con{
+    .layout-con {
         height: 100%;
         width: 100%;
     }
-    .menu-item span{
+
+    .menu-item span {
         display: inline-block;
         overflow: hidden;
         width: 69px;
@@ -12,17 +13,20 @@
         vertical-align: bottom;
         transition: width .2s ease .2s;
     }
-    .menu-item i{
+
+    .menu-item i {
         transform: translateX(0px);
         transition: font-size .2s ease, transform .2s ease;
         vertical-align: middle;
         font-size: 16px;
     }
-    .collapsed-menu span{
+
+    .collapsed-menu span {
         width: 0px;
         transition: width .2s ease;
     }
-    .collapsed-menu i{
+
+    .collapsed-menu i {
         transform: translateX(5px);
         transition: font-size .2s ease .2s, transform .2s ease .2s;
         vertical-align: middle;
@@ -36,9 +40,11 @@
             <Sider collapsible :collapsed-width="78" v-model="isCollapsed">
                 <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
                     <MenuItem name="1-1">
-                        <router-link style="display: inline-block;width: 100%;" :to="{name:'waterList'}">
+                        <router-link
+                                style="display: inline-block;width: 100%;"
+                                :to="{name:'waterList'}">
                             <Icon type="ios-navigate"></Icon>
-                            水源
+                            <span>水源</span>
                         </router-link>
                     </MenuItem>
                     <MenuItem name="1-2">
@@ -48,8 +54,8 @@
                     <MenuItem name="1-3">
                         <Icon type="settings"></Icon>
                         <!--<span hidden>-->
-                            <!--<img v-if="!isCollapsed"-->
-                                   <!--src="http://cdn.aixifan.com/dotnet/artemis/u/cms/www/201603/131659080zj16155.jpg" alt="">-->
+                        <!--<img v-if="!isCollapsed"-->
+                        <!--src="http://cdn.aixifan.com/dotnet/artemis/u/cms/www/201603/131659080zj16155.jpg" alt="">-->
                         <!--</span>-->
                         <span>Option 3</span>
                     </MenuItem>
@@ -65,9 +71,7 @@
                     </Breadcrumb>
                     <Card>
                         <div style="height: 100%">
-                            <keep-alive>
-                                <router-view></router-view>
-                            </keep-alive>
+                            <router-view></router-view>
                         </div>
                     </Card>
                 </Content>
@@ -77,8 +81,9 @@
 </template>
 <script>
     import vheader from './manage/manage-header'
+
     export default {
-        data () {
+        data() {
             return {
                 isCollapsed: false
             };
@@ -91,6 +96,6 @@
                 ]
             }
         },
-        components:{vheader}
+        components: {vheader}
     }
 </script>

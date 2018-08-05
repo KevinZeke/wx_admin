@@ -18,7 +18,11 @@ export default {
 
     water:{
         listUrl: macurl + '/web/?r=water/list',
-        pageCountUrl:macurl + '/web/?r=water/pageinfo'
+        pageCountUrl:macurl + '/web/?r=water/pageinfo',
+        insert1url:macurl + '/web/?r=water/insert',
+        getByidUrl:macurl + '/web/?r=water/get',
+        updateByidUrl:macurl + '/web/?r=water/update',
+        delByidUrl:macurl + '/web/?r=water/del',
     }
 
 }

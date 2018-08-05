@@ -18,7 +18,7 @@
 </template>
 
 <script>
-    import {getList, getPageInfo} from "../../api/water";
+    import {getList, getPageInfo, del} from "../../api/water";
 
     export default {
         name: "list",
@@ -106,10 +106,23 @@
                 // this.getList(this.listCurPage, size);
             },
             edit(idx) {
-                alert(this.listData[idx].id)
+                //alert(this.listData[idx].id)
+                this.$router.push({name: 'waterForm', query: {id: this.listData[idx].id}});
             },
             delete(idx) {
-                alert(this.listData[idx].id)
+                // alert(this.listData[idx].id)
+                del(this.listData[idx].id).then(res => {
+                    if(res.data.data ==1){
+                        this.$Modal.success({
+                            content:'删除成功'
+                        });
+                        this.listData.splice(idx, 1);
+                    }else {
+                        this.$Modal.error({
+                            content:'删除失败'
+                        });
+                    }
+                });
             },
             getList(curPage, pageSize) {
                 this.spinShow = true;
