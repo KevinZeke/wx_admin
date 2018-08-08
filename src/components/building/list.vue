@@ -1,6 +1,6 @@
 <template>
     <div style="position: relative">
-        <bread-header :path="['管理','水源']"></bread-header>
+        <bread-header :path="['管理','建筑']"></bread-header>
         <baidu-map v-if="center" class="bmap" :center="center" :zoom="15">
             <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
             <bm-control>
@@ -17,12 +17,11 @@
         </baidu-map>
         <Spin fix size="large" v-if="spinShow"></Spin>
         <div style="position: absolute;width: 50px;height: 50px;border-radius: 50%;background-color:#2e6da4;z-index: 99;text-align: center;line-height: 50px;right: 0;color: #fff;font-size: 1.1em;cursor: pointer;color: white">
-            <router-link :to="{name:'waterForm'}" style="color: white">添加</router-link>
+            <router-link :to="{name:'buildingForm'}" style="color: white">添加</router-link>
         </div>
         <Table border stripe
                @on-row-click="changeMapCenter"
-               :columns="listColumns"
-               :data="listData"></Table>
+               :columns="listColumns" :data="listData"></Table>
         <div class="page text-center row">
             <Page
                     show-elevator
@@ -36,7 +35,7 @@
 </template>
 
 <script>
-    import {getList, getPageInfo, del} from "../../api/water";
+    import {getList, getPageInfo, del} from "../../api/building";
     import breadHeader from '../manage/bread-header'
     import baiduMap from 'vue-baidu-map/components/map/Map'
     import bmView from 'vue-baidu-map/components/map/MapView'
@@ -48,8 +47,9 @@
     import bmNavigation from 'vue-baidu-map/components/controls/Navigation'
     import bmControl from 'vue-baidu-map/components/controls/Control'
 
+
     export default {
-        name: "list",
+        name: "buildinglist",
         data() {
             return {
                 center: null,
@@ -60,11 +60,6 @@
                 listCurPage: 1,
                 listColumns: [
                     {
-                        title: 'id',
-                        key: 'xfsid',
-                        // sortable: true
-                    },
-                    {
                         title: '经度',
                         key: 'longi'
                     },
@@ -74,11 +69,15 @@
                     },
                     {
                         title: '类型',
-                        key: 'qc_type'
+                        key: 'jz_type'
                     },
                     {
-                        title: '规格',
-                        key: 'qc_guige'
+                        title: '地址',
+                        key: 'jz_address'
+                    },
+                    {
+                        title: '数据',
+                        key: 'jz_data'
                     },
                     {
                         title: '其他',
@@ -149,19 +148,19 @@
             },
             edit(idx) {
                 //alert(this.listData[idx].id)
-                this.$router.push({name: 'waterForm', query: {id: this.listData[idx].id}});
+                this.$router.push({name: 'buildingForm', query: {id: this.listData[idx].id}});
             },
             delete(idx) {
                 // alert(this.listData[idx].id)
                 del(this.listData[idx].id).then(res => {
-                    if (res.data.data == 1) {
+                    if(res.data.data ==1){
                         this.$Modal.success({
-                            content: '删除成功'
+                            content:'删除成功'
                         });
                         this.listData.splice(idx, 1);
-                    } else {
+                    }else {
                         this.$Modal.error({
-                            content: '删除失败'
+                            content:'删除失败'
                         });
                     }
                 });
@@ -171,7 +170,7 @@
                 getList(curPage, pageSize).then(res => {
                     this.listData = res.data.data;
                     this.spinShow = false;
-                    this.changeMapCenter(this.listData[0]);
+                    this.changeMapCenter(this.listData[0])
                 })
             },
             getPageInfo() {
@@ -188,7 +187,7 @@
                 this.center = {
                     lng: data.longi, lat: data.lati
                 }
-                this.centerContent = 'id: ' + data.xfsid;
+                this.centerContent = '地址: ' + data.jz_address;
                 this.$Message.info('地图位置已更新，点击表格行可切换对应的位置');
             }
         }

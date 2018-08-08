@@ -14,28 +14,29 @@ export function adminGuard(to, from, next) {
     // loginCheck().then(resp=>{
     // 	console.log(resp.data);
     // });
+    console.log(store.state.user);
+    if (!store.state.user) {
+        // loginCheck().then(resp => {
+        //     console.log(resp.data);
+        //     if (resp.data.code == apiConf.errorCode || !resp.data.data) {
+        //         next('/404');
+        //         return;
+        //     }
+        //     store.commit('setUser', resp.data.data);
+        //     //store.state.user = resp.data.data;
+        //     if (store.state.user.type != apiConf.superUserType) {
+        //         next('/404');
+        //     } else {
+        //         next();
+        //     }
+        // });
 
-    if (!store.state.user || !store.state.user.type) {
-        loginCheck().then(resp => {
-            console.log(resp.data);
-            if (resp.data.code == apiConf.errorCode || !resp.data.data) {
-                next('/404');
-                return;
-            }
-            store.commit('setUser', resp.data.data);
-            //store.state.user = resp.data.data;
-            if (store.state.user.type != apiConf.superUserType) {
-                next('/404');
-            } else {
-                next();
-            }
-        });
+        next('/404');
+
     } else {
-        if (store.state.user.type != apiConf.superUserType) {
-            next('/404');
-        } else {
-            next();
-        }
+
+        next();
+
     }
 
     // if (!store.state.user || store.state.user.type != apiConf.superUserType) {

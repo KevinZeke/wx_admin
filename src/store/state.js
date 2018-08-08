@@ -1,5 +1,5 @@
 const state = {
-    user:{},
-    adminCurSelectedFac:{}
+    user: null,
+    adminCurSelectedFac: {}
 }
 export default state;

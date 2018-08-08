@@ -38,37 +38,42 @@
         <vheader brand="后台管理系统"></vheader>
         <Layout :style="{minHeight: '100vh'}">
             <Sider collapsible :collapsed-width="78" v-model="isCollapsed">
-                <Menu active-name="1-2" theme="dark" width="auto" :class="menuitemClasses">
+                <Menu active-name="1-1" theme="dark" width="auto" :class="menuitemClasses">
                     <MenuItem name="1-1">
                         <router-link
                                 style="display: inline-block;width: 100%;"
                                 :to="{name:'waterList'}">
-                            <Icon type="ios-navigate"></Icon>
+                            <Icon type="ios-flame" />
+                            &nbsp;
+                            &nbsp;
                             <span>水源</span>
                         </router-link>
                     </MenuItem>
-                    <MenuItem name="1-2">
-                        <Icon type="search"></Icon>
-                        <span>Option 2</span>
+                    <MenuItem name="1-2" >
+                        <router-link
+                                style="display: inline-block;width: 100%;"
+                                :to="{name:'buildingList'}">
+                            <Icon type="ios-home" />
+                            &nbsp;
+                            &nbsp;
+                            <span>建筑</span>
+                        </router-link>
                     </MenuItem>
                     <MenuItem name="1-3">
-                        <Icon type="settings"></Icon>
-                        <!--<span hidden>-->
-                        <!--<img v-if="!isCollapsed"-->
-                        <!--src="http://cdn.aixifan.com/dotnet/artemis/u/cms/www/201603/131659080zj16155.jpg" alt="">-->
-                        <!--</span>-->
-                        <span>Option 3</span>
+                        <router-link
+                                style="display: inline-block;width: 100%;"
+                                :to="{name:'userList'}">
+                            <Icon type="ios-contact" />
+                            &nbsp;
+                            &nbsp;
+                            <span>人员</span>
+                        </router-link>
                     </MenuItem>
                 </Menu>
             </Sider>
             <Layout>
                 <!--<Header :style="{background: '#fff', boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'}"></Header>-->
                 <Content :style="{padding: '0 16px 16px'}">
-                    <Breadcrumb :style="{margin: '16px 0'}">
-                        <BreadcrumbItem>管理</BreadcrumbItem>
-                        <BreadcrumbItem>水源</BreadcrumbItem>
-                        <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
-                    </Breadcrumb>
                     <Card>
                         <div style="height: 100%">
                             <router-view></router-view>
@@ -85,6 +90,7 @@
     export default {
         data() {
             return {
+                curLocate:'水源',
                 isCollapsed: false
             };
         },
@@ -94,6 +100,12 @@
                     'menu-item',
                     this.isCollapsed ? 'collapsed-menu' : ''
                 ]
+            }
+        },
+        methods:{
+            changeCurLocate(name){
+                console.log(name);
+                this.curLocate = name;
             }
         },
         components: {vheader}

@@ -5,10 +5,12 @@
             <div class="navbar-header hidden-sm hidden-xs" >
                 <a class="navbar-brand" href="#">{{brand}}</a>
             </div>
-
+            <div>
+                <!--<i-time :time="time" type="datetime" />-->
+            </div>
             <div class="nav navbar-nav navbar-right logout">
                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                <span>当前账户：{{userinfo.name || '未知'}}</span>
+                <span>当前账户：{{userinfo && userinfo.username || '未知'}}</span>
                 &nbsp;
                 <span  @click="logout" >[注销]</span>
                 <button hidden style="position: absolute;top: 0;right: 0;font-size: .2em"
@@ -29,6 +31,11 @@
     import {mapGetters} from 'vuex'
     export default {
         name: "manage-header",
+        data(){
+            return {
+                time: (new Date()).getTime() - 86400 * 3 * 1000
+            }
+        },
         props: {
             brand: {type: String, default: ''},
             user: {type: String, default: ''}

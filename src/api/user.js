@@ -4,7 +4,7 @@ import Qs from 'qs'
 
 
 export function userLogin(username, pwd) {
-    return axios.post(apiConf.url + '/fphp/login/login.php', Qs.stringify({username, pwd}), {
+    return axios.post(apiConf.user.loginUrl, Qs.stringify({username, pwd}), {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         }

@@ -1,28 +1,27 @@
 <template>
     <div style="position: relative">
-        <bread-header :path="['管理','水源']"></bread-header>
-        <baidu-map v-if="center" class="bmap" :center="center" :zoom="15">
-            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-            <bm-control>
-                <button class="btn btn-default" @click="closeMap">关闭地图</button>
-            </bm-control>
-            <bm-marker
-                    :position="center"
-                    :dragging="false"
-                    animation="BMAP_ANIMATION_DROP">
-                <bm-label :content="centerContent"
-                          :labelStyle="{color: 'red', fontSize : '12px'}"
-                          :offset="{width: -20, height: 30}"/>
-            </bm-marker>
-        </baidu-map>
-        <Spin fix size="large" v-if="spinShow"></Spin>
+        <bread-header :path="['管理','人员管理']"></bread-header>
+        <Form ref="formValidate" class="text-right" inline :model="formValidate" :rules="ruleValidate">
+            <FormItem prop="longi">
+                <Input v-model="formValidate.longi" placeholder="输入姓名"></Input>
+            </FormItem>
+
+            <Select class="text-left" v-model="ddSelected" style="width:200px">
+                <Option v-for="item in ddList" :value="item" :key="item">
+                    {{ item }}
+                </Option>
+            </Select>
+
+            <FormItem>
+                <Button type="primary">搜索</Button>
+            </FormItem>
+        </Form>
         <div style="position: absolute;width: 50px;height: 50px;border-radius: 50%;background-color:#2e6da4;z-index: 99;text-align: center;line-height: 50px;right: 0;color: #fff;font-size: 1.1em;cursor: pointer;color: white">
-            <router-link :to="{name:'waterForm'}" style="color: white">添加</router-link>
+            <router-link :to="{name:'buildingForm'}" style="color: white">添加</router-link>
         </div>
         <Table border stripe
-               @on-row-click="changeMapCenter"
-               :columns="listColumns"
-               :data="listData"></Table>
+               :loading="spinShow"
+               :columns="listColumns" :data="listData"></Table>
         <div class="page text-center row">
             <Page
                     show-elevator
@@ -36,24 +35,17 @@
 </template>
 
 <script>
-    import {getList, getPageInfo, del} from "../../api/water";
+    import {getList, getPageInfo, del} from "../../api/building";
     import breadHeader from '../manage/bread-header'
-    import baiduMap from 'vue-baidu-map/components/map/Map'
-    import bmView from 'vue-baidu-map/components/map/MapView'
-    import bmMarker from 'vue-baidu-map/components/overlays/Marker'
-    import bmLabel from 'vue-baidu-map/components/overlays/Label'
-    import bmTraffic from 'vue-baidu-map/components/layers/Traffic'
-    import bmDriving from 'vue-baidu-map/components/search/Driving'
-    import bmLocalSearch from 'vue-baidu-map/components/search/LocalSearch'
-    import bmNavigation from 'vue-baidu-map/components/controls/Navigation'
-    import bmControl from 'vue-baidu-map/components/controls/Control'
+
 
     export default {
-        name: "list",
+        name: "buildinglist",
         data() {
             return {
-                center: null,
-                centerContent: '位置',
+
+                ddSelected: '',
+                ddList: ['A', 'B', 'C'],
                 spinShow: false,
                 listTotal: 100,
                 listPageSize: 10,
@@ -61,28 +53,15 @@
                 listColumns: [
                     {
                         title: 'id',
-                        key: 'xfsid',
-                        // sortable: true
+                        key: 'id'
                     },
                     {
-                        title: '经度',
-                        key: 'longi'
+                        title: '姓名',
+                        key: 'name'
                     },
                     {
-                        title: '纬度',
-                        key: 'lati'
-                    },
-                    {
-                        title: '类型',
-                        key: 'qc_type'
-                    },
-                    {
-                        title: '规格',
-                        key: 'qc_guige'
-                    },
-                    {
-                        title: '其他',
-                        key: 'other'
+                        title: '所属',
+                        key: 'dd'
                     },
                     {
                         title: '操作',
@@ -120,24 +99,25 @@
                         }
                     }
                 ],
-                listData: [],
+                listData: [
+                    {id:1001,name:'赵',dd:'force 1'},
+                    {id:1002,name:'钱',dd:'force 2'},
+                    {id:1003,name:'孙',dd:'force 3'},
+                    {id:1004,name:'李',dd:'force 4'},
+                    {id:1005,name:'周',dd:'force 5'},
+                    {id:1006,name:'吴',dd:'force 6'},
+                ],
+
+                formValidate: {},
+                ruleValidate: {}
             }
         },
         components: {
-            breadHeader,
-            bmControl,
-            baiduMap,
-            bmLabel,
-            bmMarker,
-            bmTraffic,
-            bmView,
-            bmDriving,
-            bmLocalSearch,
-            bmNavigation
+            breadHeader
         },
         created() {
             this.getPageInfo();
-            this.getList(this.listCurPage, this.listPageSize);
+            // this.getList(this.listCurPage, this.listPageSize);
         },
         methods: {
             pageChangeHandle(page) {
@@ -149,7 +129,7 @@
             },
             edit(idx) {
                 //alert(this.listData[idx].id)
-                this.$router.push({name: 'waterForm', query: {id: this.listData[idx].id}});
+                this.$router.push({name: 'buildingForm', query: {id: this.listData[idx].id}});
             },
             delete(idx) {
                 // alert(this.listData[idx].id)
@@ -171,7 +151,7 @@
                 getList(curPage, pageSize).then(res => {
                     this.listData = res.data.data;
                     this.spinShow = false;
-                    this.changeMapCenter(this.listData[0]);
+                    this.changeMapCenter(this.listData[0])
                 })
             },
             getPageInfo() {
@@ -179,17 +159,6 @@
                     console.log(res.data.data);
                     this.listTotal = parseInt(res.data.data.totalRows);
                 });
-            },
-            closeMap(){
-                this.center = null;
-                this.$Message.info('点击表格行可以重新开启开启地图');
-            },
-            changeMapCenter(data) {
-                this.center = {
-                    lng: data.longi, lat: data.lati
-                }
-                this.centerContent = 'id: ' + data.xfsid;
-                this.$Message.info('地图位置已更新，点击表格行可切换对应的位置');
             }
         }
     }
@@ -200,9 +169,4 @@
         padding-top: 15px;
     }
 
-    .bmap {
-        width: 100%;
-        height: 200px;
-        margin: 10px auto;
-    }
 </style>

@@ -60,22 +60,17 @@
                 });
                 userLogin(u, p).then((res) => {
                     //console.log(res.data);
+                    console.log(res.data);
+
                     if (res.data.code == apiConf.errorCode) {
                         this.$Modal.error({
                             title: '登录失败',
                             content: res.data.msg || '未知错误'
                         });
                     } else if (res.data.code == apiConf.successCode) {
-                        console.log(res.data.data);
-                        this.setUser(res.data.data);
+                        this.setUser(res.data.data[0]);
                         this.$Modal.remove();
-                        if (res.data.data.type == apiConf.normalUserType) {
-                            this.$router.push(
-                                {name: 'facManage', params: {id: res.data.data.id}}
-                            );
-                        } else if (res.data.data.type == apiConf.superUserType) {
-                            this.$router.push({path: '/adminManage'});
-                        }
+                        this.$router.push({path: '/admin'});
                     }
                 })
             },
