@@ -8,6 +8,8 @@ import waterForm from '../components/waterSource/form'
 import buildingList from '../components/building/list'
 import buildingForm from '../components/building/form'
 import userList from '../components/user/list'
+import userForm from '../components/user/form'
+import acList from '../components/ac/list'
 
 
 import {adminGuard} from "./guard"
@@ -30,9 +32,9 @@ export default new Router({
         {
             path: '/admin',
             component: main,
-            redirect:'/admin/water/list',
+            redirect: '/admin/water/list',
             // beforeEnter: adminGuard,
-            children:[
+            children: [
                 //水源
                 {
                     path: 'water/list',
@@ -59,6 +61,16 @@ export default new Router({
                     path: 'user/list',
                     name: 'userList',
                     component: userList
+                },
+                {
+                    path: 'user/form',
+                    name: 'userForm',
+                    component: userForm
+                },
+                {
+                    path: 'ac/list',
+                    name: 'acList',
+                    component: acList
                 }
             ]
         }

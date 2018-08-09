@@ -69,6 +69,16 @@
                             <span>人员</span>
                         </router-link>
                     </MenuItem>
+                    <MenuItem name="1-4">
+                        <router-link
+                                style="display: inline-block;width: 100%;"
+                                :to="{name:'acList'}">
+                            <Icon type="ios-copy" />
+                            &nbsp;
+                            &nbsp;
+                            <span>账号</span>
+                        </router-link>
+                    </MenuItem>
                 </Menu>
             </Sider>
             <Layout>
@@ -91,7 +101,7 @@
         data() {
             return {
                 curLocate:'水源',
-                isCollapsed: false
+                isCollapsed: true
             };
         },
         computed: {

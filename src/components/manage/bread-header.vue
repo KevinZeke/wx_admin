@@ -1,7 +1,6 @@
 <template>
     <Breadcrumb :style="{margin: '16px 0'}">
         <BreadcrumbItem v-for="(p,i) in path" :key="i">{{p}}</BreadcrumbItem>
-        <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
     </Breadcrumb>
 </template>
 

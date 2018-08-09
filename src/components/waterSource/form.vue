@@ -1,6 +1,7 @@
 <template>
 
     <div>
+        <bread-header :path="['管理','水源','表单']"></bread-header>
         <Spin size="large" fix v-if="spinShow"></Spin>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
 
@@ -15,6 +16,25 @@
             <FormItem label="纬度" prop="lati">
                 <Input v-model="formValidate.lati" placeholder="输入纬度"></Input>
             </FormItem>
+
+            <button class="btn btn-default btn-xs" v-if="!mapShow"
+                    @click="mapShow = true">开启地图</button>
+
+            <baidu-map v-if="mapShow && formValidate.lati && formValidate.longi"
+                       class="bmap" :center="centerLocate" :zoom="15">
+                <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+                <bm-control>
+                    <button class="btn btn-default btn-sm" @click="closeMap">关闭地图</button>
+                </bm-control>
+                <bm-marker
+                        :position="centerLocate"
+                        :dragging="false"
+                        animation="BMAP_ANIMATION_DROP">
+                    <bm-label :content="centerContent"
+                              :labelStyle="{color: 'red', fontSize : '12px'}"
+                              :offset="{width: -20, height: 30}"/>
+                </bm-marker>
+            </baidu-map>
 
             <FormItem label="类型" prop="qc_type">
                 <Input v-model="formValidate.qc_type" placeholder="输入类型"></Input>
@@ -44,12 +64,25 @@
 <script>
     import {getById, insertOne, updateById} from "../../api/water";
     import apiConf from "../../api/api.conf"
+    import breadHeader from '../manage/bread-header'
+    import baiduMap from 'vue-baidu-map/components/map/Map'
+    import bmView from 'vue-baidu-map/components/map/MapView'
+    import bmMarker from 'vue-baidu-map/components/overlays/Marker'
+    import bmLabel from 'vue-baidu-map/components/overlays/Label'
+    import bmTraffic from 'vue-baidu-map/components/layers/Traffic'
+    import bmDriving from 'vue-baidu-map/components/search/Driving'
+    import bmLocalSearch from 'vue-baidu-map/components/search/LocalSearch'
+    import bmNavigation from 'vue-baidu-map/components/controls/Navigation'
+    import bmControl from 'vue-baidu-map/components/controls/Control'
 
     export default {
         data() {
             return {
                 spinShow: true,
-                isUpdate:false,
+                isUpdate: false,
+
+                mapShow: true,
+                centerContent: '您输入的位置',
 
                 formValidate: {
                     // name: '',
@@ -96,19 +129,29 @@
             // this.testData();
             this.initFormIfisUpdate();
         },
+        computed: {
+            centerLocate() {
+                if (this.formValidate.longi && this.formValidate.lati) {
+                    return {
+                        lng: this.formValidate.longi, lat: this.formValidate.lati
+                    }
+                }
+                return null;
+            }
+        },
         methods: {
 
-            initFormIfisUpdate(){
+            initFormIfisUpdate() {
                 if (this.$route.query.id) {
                     this.isUpdate = true;
                     getById(this.$route.query.id).then(res => {
                         console.log(res);
-                        if(res.data.code != apiConf.errorCode && res.data.data.length>0){
+                        if (res.data.code != apiConf.errorCode && res.data.data.length > 0) {
                             this.formValidate = res.data.data[0];
                         }
                         this.spinShow = false;
                     });
-                }else {
+                } else {
                     this.spinShow = false;
                 }
             },
@@ -126,7 +169,7 @@
 
                         console.log(xfsid, longi, lati, qc_type, qc_guige, other);
 
-                        if(!this.isUpdate){
+                        if (!this.isUpdate) {
                             insertOne(xfsid, longi, lati, qc_type, qc_guige, other).then(res => {
                                 if (res.data.code != apiConf.errorCode) {
                                     this.$refs[name].resetFields();
@@ -138,7 +181,7 @@
                                 }
 
                             })
-                        }else {
+                        } else {
                             let _this_ = this;
                             updateById(
                                 this.$route.query.id,
@@ -152,8 +195,8 @@
                                     this.$refs[name].resetFields();
                                     this.$Modal.success({
                                         content: '更新成功!',
-                                        onOk(){
-                                            _this_.$router.push({name:'waterList'})
+                                        onOk() {
+                                            _this_.$router.push({name: 'waterList'})
                                         }
                                     });
 
@@ -174,6 +217,18 @@
                 this.$refs[name].resetFields();
             },
 
+            closeMap() {
+                this.mapShow = false;
+                // this.$Message.info('点击表格行可以重新开启开启地图');
+            },
+            changeMapCenter(data) {
+                this.center = {
+                    lng: data.longi, lat: data.lati
+                }
+                this.centerContent = '地址: ' + data.jz_address;
+                this.$Message.info('地图位置已更新，点击表格行可切换对应的位置');
+            },
+
             //测试用
             testData() {
                 this.formValidate = {
@@ -189,6 +244,25 @@
                     // desc: ''
                 };
             }
+        },
+        components: {
+            breadHeader,
+            bmControl,
+            baiduMap,
+            bmLabel,
+            bmMarker,
+            bmTraffic,
+            bmView,
+            bmDriving,
+            bmLocalSearch,
+            bmNavigation
         }
     }
 </script>
+<style scoped>
+    .bmap {
+        width: 100%;
+        height: 200px;
+        margin: 10px auto;
+    }
+</style>

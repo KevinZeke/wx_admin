@@ -1,46 +1,20 @@
 <template>
 
     <div>
-        <bread-header :path="['管理','建筑','表单']"></bread-header>
+        <bread-header :path="['管理','人员','表单']"></bread-header>
         <Spin size="large" fix v-if="spinShow"></Spin>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
 
-            <FormItem label="经度" prop="longi">
-                <Input v-model="formValidate.longi" placeholder="输入经度"></Input>
+            <FormItem label="id" prop="id">
+                <Input v-model="formValidate.id" placeholder="输入id"></Input>
             </FormItem>
 
-            <FormItem label="纬度" prop="lati">
-                <Input v-model="formValidate.lati" placeholder="输入纬度"></Input>
+            <FormItem label="姓名" prop="name">
+                <Input v-model="formValidate.name" placeholder="输入姓名"></Input>
             </FormItem>
 
-            <button class="btn btn-default btn-xs" v-if="!mapShow"
-                    @click="mapShow = true">开启地图</button>
-
-            <baidu-map v-if="mapShow && formValidate.lati && formValidate.longi" class="bmap row" :center="centerLocate" :zoom="15">
-                <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-                <bm-control>
-                    <button class="btn btn-default btn-sm" @click="closeMap">关闭地图</button>
-                </bm-control>
-                <bm-marker
-                        :position="centerLocate"
-                        :dragging="false"
-                        animation="BMAP_ANIMATION_DROP">
-                    <bm-label :content="centerContent"
-                              :labelStyle="{color: 'red', fontSize : '12px'}"
-                              :offset="{width: -20, height: 30}"/>
-                </bm-marker>
-            </baidu-map>
-
-            <FormItem label="类型" prop="jz_type">
-                <Input v-model="formValidate.jz_type" placeholder="输入类型"></Input>
-            </FormItem>
-
-            <FormItem label="地址" prop="jz_address">
-                <Input v-model="formValidate.jz_address" placeholder="输入类型"></Input>
-            </FormItem>
-
-            <FormItem label="数据" prop="jz_data">
-                <Input v-model="formValidate.jz_data" placeholder="输入类型"></Input>
+            <FormItem label="大队" prop="dd">
+                <Input v-model="formValidate.dd" placeholder="输入大队"></Input>
             </FormItem>
 
             <FormItem label="其他" prop="other">
@@ -64,15 +38,7 @@
     import {getById, insertOne, updateById} from "../../api/building";
     import apiConf from "../../api/api.conf"
     import breadHeader from '../manage/bread-header'
-    import baiduMap from 'vue-baidu-map/components/map/Map'
-    import bmView from 'vue-baidu-map/components/map/MapView'
-    import bmMarker from 'vue-baidu-map/components/overlays/Marker'
-    import bmLabel from 'vue-baidu-map/components/overlays/Label'
-    import bmTraffic from 'vue-baidu-map/components/layers/Traffic'
-    import bmDriving from 'vue-baidu-map/components/search/Driving'
-    import bmLocalSearch from 'vue-baidu-map/components/search/LocalSearch'
-    import bmNavigation from 'vue-baidu-map/components/controls/Navigation'
-    import bmControl from 'vue-baidu-map/components/controls/Control'
+
 
     export default {
         data() {
@@ -86,34 +52,24 @@
 
                 formValidate: {
 
-                    longi: '',
-                    lati: '',
-                    jz_type: '',
-                    jz_address: '',
-                    jz_data: '',
+                    id: '',
+                    name: '',
+                    dd: '',
                     other: '',
 
                 },
                 ruleValidate: {
 
-                    longi: [
-                        {required: true, message: '经度不能为空', trigger: 'blur'},
+                    id: [
+                        {required: true, message: 'id不能为空', trigger: 'blur'},
                         // { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
                     ],
-                    lati: [
-                        {required: true, message: '纬度不能为空', trigger: 'blur'},
+                    name: [
+                        {required: true, message: '姓名不能为空', trigger: 'blur'},
                         // { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
                     ],
-                    jz_type: [
-                        {required: true, message: '类型不能为空', trigger: 'blur'},
-                        // { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
-                    ],
-                    jz_address: [
-                        {required: true, message: '规格不能为空', trigger: 'blur'},
-                        // { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
-                    ],
-                    jz_data: [
-                        {required: true, message: '规格不能为空', trigger: 'blur'},
+                    dd: [
+                        {required: true, message: '大队不能为空', trigger: 'blur'},
                         // { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
                     ],
 
@@ -143,6 +99,9 @@
             initFormIfisUpdate() {
                 if (this.$route.query.id) {
                     this.isUpdate = true;
+
+                    return;
+
                     getById(this.$route.query.id).then(res => {
                         console.log(res);
                         if (res.data.code != apiConf.errorCode && res.data.data.length > 0) {
@@ -156,6 +115,7 @@
             },
 
             handleSubmit(name) {
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
 
@@ -165,6 +125,8 @@
                             jz_address = this.formValidate.jz_address,
                             jz_data = this.formValidate.jz_data,
                             other = this.formValidate.other;
+
+                        return;
 
 
                         if (!this.isUpdate) {
@@ -224,35 +186,14 @@
 
                     // desc: ''
                 };
-            },
-
-            closeMap() {
-                this.mapShow = false;
-                // this.$Message.info('点击表格行可以重新开启开启地图');
-            },
-            changeMapCenter(data) {
-                this.center = {
-                    lng: data.longi, lat: data.lati
-                }
-                this.centerContent = '地址: ' + data.jz_address;
-                this.$Message.info('地图位置已更新，点击表格行可切换对应的位置');
             }
         },
         components: {
-            breadHeader,
-            bmControl,
-            baiduMap,
-            bmLabel,
-            bmMarker,
-            bmTraffic,
-            bmView,
-            bmDriving,
-            bmLocalSearch,
-            bmNavigation
+            breadHeader
         }
     }
 </script>
-<style scoped>
+<style>
     .bmap {
         width: 100%;
         height: 200px;
